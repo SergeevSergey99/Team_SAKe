@@ -5,7 +5,7 @@ public class SpawnMashine : MonoBehaviour
 {
 
 	private int resourse = 10;
-	private float maxDistance = 8;
+//	private float maxDistance = 8;
 	private Vector3 moveVector;
 	public GameObject unitB;
 	public GameObject unitZ;

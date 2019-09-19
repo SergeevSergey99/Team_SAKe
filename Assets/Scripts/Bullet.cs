@@ -20,7 +20,8 @@ public class Bullet : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
-		if (other.gameObject.CompareTag("Bullet")) return;	
+		if (other.gameObject.CompareTag("Bullet")) return;
+		if (other.gameObject.CompareTag("Area")) return;
 		if (!other.gameObject.GetComponent<Unit1>().isOurTeam ^ isOurTeam) return;
 		other.gameObject.GetComponent<Unit1>().Damage(damage);
 		Destroy(gameObject);

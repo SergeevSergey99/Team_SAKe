@@ -9,7 +9,6 @@ public class Unit1 : MonoBehaviour
     public int damage = 5;
     public bool isOurTeam = true;
     public float speed = 10.0f;
-    public int fireRate = 100;
     private Vector3 moveVector;
     private Rigidbody2D rb;
 
@@ -22,8 +21,8 @@ public class Unit1 : MonoBehaviour
     {
         source = GetComponent<AudioSource>();
         moveVector = isOurTeam
-            ? new Vector3(-10 - gameObject.transform.position.x, -gameObject.transform.position.y)
-            : new Vector3(10 - gameObject.transform.position.x, -gameObject.transform.position.y);
+            ? Vector3.left
+            : Vector3.right;
         moveVector = moveVector.normalized;
         rb = gameObject.GetComponents<Rigidbody2D>()[0];
 
@@ -36,7 +35,6 @@ public class Unit1 : MonoBehaviour
         if (HP != null)
             HP.GetComponent<Image>().fillAmount = health / 100.0f;
         if (health <= 0)
-
         {
             Destroy(gameObject);
             if (speed == 0)
@@ -55,36 +53,10 @@ public class Unit1 : MonoBehaviour
 
     public AudioClip shootSound;
 
-
     // Update is called once per frame
     public float maxDistance = 1.0f;
-
-
     public GameObject bulletPrefab;
     [SerializeField] private bool isMeele;
-
-    void ArcherAttack(Vector3 v)
-    {
-        source.PlayOneShot(shootSound);
-        gameObject.GetComponent<Animator>().Play("Shoot");
-        animCount = 100;
-        Instantiate(bulletPrefab, gameObject.transform.position + moveVector, Quaternion.Euler(0, 0, 0))
-            .GetComponent<Rigidbody2D>().velocity = v; //.GetComponent<Bullet>().Set(moveVector, dmg, isOurTeam);
-    }
-
-    private int animCount = 0;
-
-    void MeeleAttack(GameObject obj)
-    {
-        animCount = 100;
-
-        source.PlayOneShot(shootSound);
-        gameObject.GetComponent<Animator>().Play("Shoot");
-        var enemyDamage = obj.GetComponent<Unit1>().damage;
-        obj.GetComponent<Unit1>().Damage(damage);
-        if (obj.GetComponent<Unit1>().maxDistance < maxDistance) return;
-        Damage(enemyDamage);
-    }
 
     private int wait = 0;
 
@@ -93,54 +65,110 @@ public class Unit1 : MonoBehaviour
         return moveVector;
     }
 
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Area"))
+        {
+            if (other.gameObject.transform.parent.GetComponent<Unit1>().isOurTeam ^ isOurTeam)
+            {
+                moveVector = new Vector3(
+                    other.gameObject.transform.parent.transform.position.x - gameObject.transform.position.x,
+                    other.gameObject.transform.parent.transform.position.y - gameObject.transform.position.y);
+
+                moveVector = moveVector.normalized;
+            }
+        }
+    }
+
+    Collider2D IsHit()
+    {
+        Collider2D[] cld = Physics2D.OverlapPointAll(transform.position + moveVector);
+        foreach (var collider2D in cld)
+        {
+            if (collider2D.gameObject.CompareTag("Actor"))
+            {
+                if (collider2D.gameObject.GetComponent<Unit1>().isOurTeam ^ isOurTeam)
+                {
+                    return collider2D;
+                }
+            }
+        }
+
+        return null;
+    }
+
     protected void Update()
     {
-        if (animCount > 0)
-        {
-            animCount--;
-        }
+        GetComponent<SpriteRenderer>().sortingOrder = (int) (-Mathf.Floor(transform.position.y * 10) + 100);
 
-        if (wait <= 0)
+        if (gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Run")) //wait <= 0)
         {
             rb.velocity = moveVector * speed;
-            if (animCount <= 0) gameObject.GetComponent<Animator>().Play("Run");
         }
-        else wait--;
 
-        RaycastHit2D hit = new RaycastHit2D();
-        hit = Physics2D.Raycast(
-            gameObject.transform.position + moveVector * (gameObject.GetComponent<Transform>().localScale.x / 2 + 1.1f),
-            moveVector, maxDistance);
-        if (!hit)
-            hit = Physics2D.Raycast(
-                gameObject.transform.position +
-                moveVector * (gameObject.GetComponent<Transform>().localScale.x / 2 + 1.1f),
-                new Vector3(moveVector.x * 3, 1, 0), maxDistance);
-        if (!hit)
-            hit = Physics2D.Raycast(
-                gameObject.transform.position +
-                moveVector * (gameObject.GetComponent<Transform>().localScale.x / 2 + 1.1f),
-                new Vector3(moveVector.x * 3, -1, 0), maxDistance);
-        if (!hit) return;
-        if (hit.collider.gameObject.CompareTag("Actor"))
+        ///смотрим вперед
+        Collider2D hit = IsHit();
+        /// если перед нами никого нет смотрим вверх
+        if (hit == null)
+            hit = IsHit();
+        /// если перед нами и сверху никого нет смотрим вних
+        if (hit == null)
+            hit = IsHit();
+
+        ///если анимация атаки закончилась
+        if (gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Finish Shoot"))
         {
-            if (hit.collider.gameObject.GetComponent<Unit1>().isOurTeam ^ isOurTeam)
+            ///и перед нами что-то есть
+            if (hit != null)
             {
-                if (Mathf.Abs(gameObject.transform.position.x - hit.collider.gameObject.transform.position.x) <
-                    maxDistance)
+                
+                ///при атаке играем звук
+                source.PlayOneShot(shootSound);
+                ///не из нашей команды
+                if (isOurTeam ^ hit.gameObject.GetComponent<Unit1>().isOurTeam)
                 {
-                    if (wait <= 0)
+                    ///если это рукопашный юнит
+                    if (isMeele)
                     {
+                        ///наносим ему урон
+                        hit.gameObject.GetComponent<Unit1>().Damage(damage);
+                    }
+                    ///если стрелок
+                    else
+                    {
+                        ///создаем патрон который летит туда где мы увидели врага
+                        Instantiate(bulletPrefab, gameObject.transform.position + moveVector, Quaternion.Euler(0, 0, 0))
+                            .GetComponent<Rigidbody2D>().velocity = new Vector3(
+                            hit.gameObject.transform.position.x - transform.position.x,
+                            hit.gameObject.transform.position.y - transform.position.y, 0);
+                    }
+                }
+            }
+
+            gameObject.GetComponent<Animator>().Play("Idle");
+        }
+
+        ///если нигде никого нет идем дальше
+        if (hit == null) return;
+
+        ///если мы видим что то и оно Актор
+        if (hit.gameObject.CompareTag("Actor"))
+        {
+            ///если оно не из нашей команды
+            if (hit.gameObject.GetComponent<Unit1>().isOurTeam ^ isOurTeam)
+            {
+                ///и в нашей зоне действия
+                if (Mathf.Abs(gameObject.transform.position.x - hit.gameObject.transform.position.x) < maxDistance)
+                {
+                    ///и если мы готовы атаковать
+                    if (gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Run")
+                        || gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+                    {
+                        ///останавливаемся
                         rb.velocity = Vector3.zero;
-                        if (animCount <= 0)
-                            gameObject.GetComponent<Animator>().Play("Idle");
-                        if (isMeele)
-                            MeeleAttack(hit.collider.gameObject);
-                        else
-                            ArcherAttack(new Vector3(
-                                hit.collider.gameObject.transform.position.x - transform.position.x,
-                                hit.collider.gameObject.transform.position.y - transform.position.y, 0));
-                        wait = fireRate;
+                        ///говорим аниматору что нужно вызвать анимацию удара
+                        gameObject.GetComponent<Animator>().SetTrigger("Fire");
                     }
                 }
             }
