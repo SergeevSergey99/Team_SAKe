@@ -19,6 +19,8 @@ public class Unit1 : MonoBehaviour
     // Use this for initialization
     protected void Start()
     {
+        target = -moveVector;
+
         source = GetComponent<AudioSource>();
         moveVector = isOurTeam
             ? Vector3.left
@@ -58,8 +60,6 @@ public class Unit1 : MonoBehaviour
     public GameObject bulletPrefab;
     [SerializeField] private bool isMeele;
 
-    private int wait = 0;
-
     public Vector3 GetMVector()
     {
         return moveVector;
@@ -98,6 +98,8 @@ public class Unit1 : MonoBehaviour
         return null;
     }
 
+    private Vector3 target;
+
     protected void Update()
     {
         GetComponent<SpriteRenderer>().sortingOrder = (int) (-Mathf.Floor(transform.position.y * 10) + 100);
@@ -120,32 +122,33 @@ public class Unit1 : MonoBehaviour
         if (gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Finish Shoot"))
         {
             ///и перед нами что-то есть
-            if (hit != null)
+            if (target != -moveVector)
             {
-                
                 ///при атаке играем звук
                 source.PlayOneShot(shootSound);
-                ///не из нашей команды
-                if (isOurTeam ^ hit.gameObject.GetComponent<Unit1>().isOurTeam)
+
+                ///если это рукопашный юнит
+                if (isMeele)
                 {
-                    ///если это рукопашный юнит
-                    if (isMeele)
+                    ///не из нашей команды
+                    if (isOurTeam ^ hit.gameObject.GetComponent<Unit1>().isOurTeam)
                     {
                         ///наносим ему урон
                         hit.gameObject.GetComponent<Unit1>().Damage(damage);
                     }
-                    ///если стрелок
-                    else
-                    {
-                        ///создаем патрон который летит туда где мы увидели врага
-                        Instantiate(bulletPrefab, gameObject.transform.position + moveVector, Quaternion.Euler(0, 0, 0))
-                            .GetComponent<Rigidbody2D>().velocity = new Vector3(
+                }
+                ///если стрелок
+                else
+                {
+                    ///создаем патрон который летит туда где мы увидели врага
+                    Instantiate(bulletPrefab, gameObject.transform.position + moveVector, Quaternion.Euler(0, 0, 0))
+                        .GetComponent<Rigidbody2D>().velocity = target; /*new Vector3(
                             hit.gameObject.transform.position.x - transform.position.x,
-                            hit.gameObject.transform.position.y - transform.position.y, 0);
-                    }
+                            hit.gameObject.transform.position.y - transform.position.y, 0);*/
                 }
             }
 
+            target = -moveVector;
             gameObject.GetComponent<Animator>().Play("Idle");
         }
 
@@ -165,6 +168,7 @@ public class Unit1 : MonoBehaviour
                     if (gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Run")
                         || gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Idle"))
                     {
+                        target = hit.gameObject.transform.position;
                         ///останавливаемся
                         rb.velocity = Vector3.zero;
                         ///говорим аниматору что нужно вызвать анимацию удара
