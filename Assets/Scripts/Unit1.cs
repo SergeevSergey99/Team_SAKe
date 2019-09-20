@@ -19,7 +19,7 @@ public class Unit1 : MonoBehaviour
     // Use this for initialization
     protected void Start()
     {
-        target = -moveVector;
+        target = Vector3.back;
 
         source = GetComponent<AudioSource>();
         moveVector = isOurTeam
@@ -81,9 +81,10 @@ public class Unit1 : MonoBehaviour
         }
     }
 
-    Collider2D IsHit()
+    Collider2D IsHit(int d)
     {
-        Collider2D[] cld = Physics2D.OverlapPointAll(transform.position + moveVector);
+
+        Collider2D[] cld = Physics2D.OverlapPointAll(transform.position + moveVector + new Vector3(0,d,0));
         foreach (var collider2D in cld)
         {
             if (collider2D.gameObject.CompareTag("Actor"))
@@ -110,19 +111,19 @@ public class Unit1 : MonoBehaviour
         }
 
         ///смотрим вперед
-        Collider2D hit = IsHit();
+        Collider2D hit = IsHit(0);
         /// если перед нами никого нет смотрим вверх
         if (hit == null)
-            hit = IsHit();
+            hit = IsHit(1);
         /// если перед нами и сверху никого нет смотрим вних
         if (hit == null)
-            hit = IsHit();
+            hit = IsHit(-1);
 
         ///если анимация атаки закончилась
         if (gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Finish Shoot"))
         {
             ///и перед нами что-то есть
-            if (target != -moveVector)
+            if (target != Vector3.back)
             {
                 ///при атаке играем звук
                 source.PlayOneShot(shootSound);
@@ -130,11 +131,14 @@ public class Unit1 : MonoBehaviour
                 ///если это рукопашный юнит
                 if (isMeele)
                 {
-                    ///не из нашей команды
-                    if (isOurTeam ^ hit.gameObject.GetComponent<Unit1>().isOurTeam)
+                    if (hit != null)
                     {
-                        ///наносим ему урон
-                        hit.gameObject.GetComponent<Unit1>().Damage(damage);
+                        ///не из нашей команды
+                        if (isOurTeam ^ hit.gameObject.GetComponent<Unit1>().isOurTeam)
+                        {
+                            ///наносим ему урон
+                            hit.gameObject.GetComponent<Unit1>().Damage(damage);
+                        }
                     }
                 }
                 ///если стрелок
@@ -148,7 +152,7 @@ public class Unit1 : MonoBehaviour
                 }
             }
 
-            target = -moveVector;
+            target = Vector3.back;
             gameObject.GetComponent<Animator>().Play("Idle");
         }
 
