@@ -3,7 +3,7 @@
 public class Bullet : MonoBehaviour
 {
 
-	[SerializeField]private int Speed;
+	public int Speed;
 	// Use this for initialization
 	private Rigidbody2D rb;
 	[SerializeField]private bool isOurTeam;
