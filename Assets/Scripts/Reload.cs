@@ -13,7 +13,7 @@ public class Reload : MonoBehaviour
 		res = Int32.Parse(gameObject.GetComponent<Text>().text);
 		maxRes = res;
 	}
-	private int reload = 120;
+	private int reload = 100;
 	// Update is called once per frame
 	
 	void FixedUpdate ()
@@ -27,7 +27,7 @@ public class Reload : MonoBehaviour
 			{
 				res++;
 				gameObject.GetComponent<Text>().text = res.ToString();
-				reload = 120;
+				reload = 100;
 			}
 		}
 	}

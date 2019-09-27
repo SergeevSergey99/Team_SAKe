@@ -2,6 +2,7 @@
 using UnityEngine.SceneManagement;
 using Image = UnityEngine.UI.Image;
 
+using Random = System.Random;
 public class Unit1 : MonoBehaviour
 {
     public int cost;
@@ -16,13 +17,13 @@ public class Unit1 : MonoBehaviour
 
     public GameObject HP;
 
-    // Use this for initialization
+    private Random rnd = new Random();
+    private int rand;
     protected void Start()
     {
-        //target = Vector3.back;
-
+        rand = rnd.Next(-2,3);
         gameObject.layer = isOurTeam ? 8 : 9;
-        
+
         source = GetComponent<AudioSource>();
         moveVector = isOurTeam
             ? Vector3.left
@@ -57,7 +58,6 @@ public class Unit1 : MonoBehaviour
 
     public AudioClip shootSound;
 
-    // Update is called once per frame
     public float maxDistance = 1.0f;
     public GameObject bulletPrefab;
     [SerializeField] private bool isMeele;
@@ -85,18 +85,14 @@ public class Unit1 : MonoBehaviour
 
     Collider2D IsHit(int d)
     {
-
         RaycastHit2D hit = new RaycastHit2D();
-        /*
-        Collider2D[] cld = Physics2D.OverlapPointAll(transform.position + moveVector + new Vector3(0,d,0));
-        //foreach (var collider2D in cld)
-        //{*/
         hit = Physics2D.Raycast(
             gameObject.transform.position + moveVector * (gameObject.GetComponent<Transform>().localScale.x / 2 + 1.1f),
-            moveVector + new Vector3(0,d,0), maxDistance,gameObject.layer==LayerMask.GetMask("Team1")
-                                                            ? LayerMask.GetMask("Team2")
-                                                            : LayerMask.GetMask("Team1"));
-        if(hit.collider!=null){
+            moveVector + new Vector3(0, d, 0), maxDistance, gameObject.layer == 8 //LayerMask.GetMask("Team1")
+                ? LayerMask.GetMask("Team2")
+                : LayerMask.GetMask("Team1"));
+        if (hit.collider != null)
+        {
             if (hit.collider.gameObject.CompareTag("Actor"))
             {
                 if (hit.collider.gameObject.GetComponent<Unit1>().isOurTeam ^ isOurTeam)
@@ -109,11 +105,9 @@ public class Unit1 : MonoBehaviour
         return null;
     }
 
-//    private Vector3 target;
-
     protected void Update()
     {
-        GetComponent<SpriteRenderer>().sortingOrder = (int) (-Mathf.Floor(transform.position.y * 10) + 100);
+        GetComponent<SpriteRenderer>().sortingOrder = rand + (int) (-Mathf.Floor(transform.position.y * 10) + 100);
 
         if (gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Run")) //wait <= 0)
         {
@@ -132,46 +126,44 @@ public class Unit1 : MonoBehaviour
         ///если анимация атаки закончилась
         if (gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Finish Shoot"))
         {
-                ///при атаке играем звук
-                source.PlayOneShot(shootSound);
+            ///при атаке играем звук
+            source.PlayOneShot(shootSound);
 
-                ///если это рукопашный юнит
-                if (isMeele)
+            ///если это рукопашный юнит
+            if (isMeele)
+            {
+                if (hit != null)
                 {
-                    if (hit != null)
+                    ///не из нашей команды
+                    if (isOurTeam ^ hit.gameObject.GetComponent<Unit1>().isOurTeam)
                     {
-                        ///не из нашей команды
-                        if (isOurTeam ^ hit.gameObject.GetComponent<Unit1>().isOurTeam)
-                        {
-                            ///наносим ему урон
-                            hit.gameObject.GetComponent<Unit1>().Damage(damage);
-                        }
+                        ///наносим ему урон
+                        hit.gameObject.GetComponent<Unit1>().Damage(damage);
                     }
                 }
-                ///если стрелок
-                else
+            }
+            ///если стрелок
+            else
+            {
+                if (hit != null)
                 {
-                    if (hit != null)
-                    {
-
-
-                        ///создаем патрон который летит туда где мы увидели врага
-                        Instantiate(bulletPrefab, gameObject.transform.position + moveVector, Quaternion.Euler(0, 0, 0))
-                                .GetComponent<Rigidbody2D>().velocity = new Vector3(
-                                                                                hit.gameObject.transform
-                                                                                    .position
-                                                                                    .x - transform.position.x,
-                                                                                hit.gameObject.transform
-                                                                                    .position
-                                                                                    .y - transform.position.y, 0)
-                                                                            .normalized * bulletPrefab.GetComponent<Bullet>().Speed; /*new Vector3(
-                            hit.gameObject.transform.position.x - transform.position.x,
-                            hit.gameObject.transform.position.y - transform.position.y, 0);*/
-                    }
+                    ///создаем патрон который летит туда где мы увидели врага
+                    Instantiate(bulletPrefab, gameObject.transform.position,    // + moveVector,
+                                Quaternion.Euler(0, 0,
+                                    Mathf.Atan2(hit.gameObject.transform.position.y - transform.position.y,
+                                        hit.gameObject.transform.position.x - transform.position.x) * Mathf.Rad2Deg))
+                            .GetComponent<Rigidbody2D>().velocity = new Vector3(
+                                                                            hit.gameObject.transform
+                                                                                .position
+                                                                                .x - transform.position.x,
+                                                                            hit.gameObject.transform
+                                                                                .position
+                                                                                .y - transform.position.y, 0)
+                                                                        .normalized * bulletPrefab
+                                                                        .GetComponent<Bullet>().Speed;
                 }
-                //}
+            }
 
-            //target = Vector3.back;
             gameObject.GetComponent<Animator>().Play("Idle");
         }
 
