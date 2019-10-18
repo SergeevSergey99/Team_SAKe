@@ -25,14 +25,14 @@ public class Drager : MonoBehaviour, IDragHandler, IEndDragHandler
         float k = 1.0f;
         //наводим курором на место где должен появиться юнит
         gameObject.GetComponent<RectTransform>().anchoredPosition =
-            new Vector3(0, (Input.mousePosition.y - 55) * k, -10);
+            new Vector3(0, (Input.mousePosition.y) * k, 0);
     }
 
 //    private Random rand;
     public void OnEndDrag(PointerEventData eventData)
     {
         int res = Int32.Parse(resourses.GetComponent<Text>().text);
-        if (res >= cost)
+        if (res >= cost && Time.timeScale > 0)
         {
             //создаём юнит в координатах где отпустили мышь
             
