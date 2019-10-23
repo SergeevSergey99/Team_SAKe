@@ -49,7 +49,7 @@ public class Unit1 : MonoBehaviour
 
     public float maxDistance = 1.0f;
     public GameObject bulletPrefab;
-    [SerializeField] private bool isMeele;
+    [SerializeField] private bool isMeele = false;
 
     public Vector3 GetMVector()
     {

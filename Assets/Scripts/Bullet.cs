@@ -6,7 +6,7 @@ public class Bullet : MonoBehaviour
 	public int Speed;
 	// Use this for initialization
 	private Rigidbody2D rb;
-	[SerializeField]private bool isOurTeam;
+	[SerializeField]private bool isOurTeam = false;
 	void Awake ()
 	{
 		Vector3 moveVector = isOurTeam ? Vector3.left : Vector3.right;
@@ -15,7 +15,7 @@ public class Bullet : MonoBehaviour
 		rb.velocity = new Vector3(Speed * moveVector.x, rb.velocity.y);
 	}
 
-	[SerializeField]private int damage;
+	[SerializeField]private int damage = 0;
 
 
 	private void OnTriggerEnter2D(Collider2D other)
@@ -27,7 +27,7 @@ public class Bullet : MonoBehaviour
 		Destroy(gameObject);
 	}
 
-	private int lifetime = 500;
+	private int lifetime = 1500;
 
 	void FixedUpdate()
 	{

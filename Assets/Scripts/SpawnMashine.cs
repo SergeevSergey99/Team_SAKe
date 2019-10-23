@@ -43,7 +43,7 @@ public class SpawnMashine : MonoBehaviour
 			int count = 0;
 			foreach (var colider in clds)
 			{
-				if (colider.gameObject.CompareTag("Actor") && colider.gameObject.GetComponent<Unit1>().isOurTeam)
+				if (colider.gameObject.CompareTag("Actor") && colider.gameObject.GetComponent<Unit1>().isOurTeam^gameObject.GetComponent<Unit1>().isOurTeam)
 				{
 					count++;
 				}
