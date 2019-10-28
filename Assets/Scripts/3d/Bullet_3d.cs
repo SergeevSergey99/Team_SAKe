@@ -27,7 +27,7 @@ public class Bullet_3d : MonoBehaviour
 		Destroy(gameObject);
 	}
 
-	private int lifetime = 1500;
+	private int lifetime = 500;
 
 	void FixedUpdate()
 	{
