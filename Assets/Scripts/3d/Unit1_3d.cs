@@ -165,9 +165,9 @@ public class Unit1_3d : MonoBehaviour
                 {
                     ///создаем патрон который летит туда где мы увидели врага
                     Instantiate(bulletPrefab, gameObject.transform.position,    // + moveVector,
-                                Quaternion.Euler(45,
+                                Quaternion.Euler(45 * moveVector.x,
                                     Mathf.Atan2(hit.gameObject.transform.position.z - transform.position.z,
-                                        hit.gameObject.transform.position.x - transform.position.x) * Mathf.Rad2Deg,0))
+                                        hit.gameObject.transform.position.x - transform.position.x) * -Mathf.Rad2Deg,0))
                             .GetComponent<Rigidbody>().velocity = new Vector3(
                                                                             hit.gameObject.transform
                                                                                 .position
