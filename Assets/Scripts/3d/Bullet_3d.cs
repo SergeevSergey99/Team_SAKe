@@ -31,6 +31,8 @@ public class Bullet_3d : MonoBehaviour
 
 	void FixedUpdate()
 	{
+		GetComponent<SpriteRenderer>().sortingOrder = (int) (-Mathf.Floor(transform.position.z * 10) + 100)*(transform.position.y>=0?1:-1);
+
 		lifetime--;
 		if (lifetime <= 0)
 		{

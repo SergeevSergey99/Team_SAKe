@@ -53,6 +53,7 @@ public class Drager_3d : MonoBehaviour, IDragHandler, IEndDragHandler
                     
                     Instantiate(unit, new Vector3( rand.Next(-500, 500)/100.0f, Camera.main.ScreenToWorldPoint(Input.mousePosition).y + 35 + rand.Next(-500, 500)/100.0f, rand.Next(-500, 500)/100.0f),
                             Quaternion.Euler(45, 0, -90)).GetComponent<Rigidbody>().velocity = Vector3.down * 15;
+                    
 
                 }
             }

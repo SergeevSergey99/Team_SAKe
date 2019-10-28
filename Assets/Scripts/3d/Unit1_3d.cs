@@ -117,7 +117,7 @@ public class Unit1_3d : MonoBehaviour
 	    return;
         }
 
-      //  GetComponent<SpriteRenderer>().sortingOrder = rand + (int) (-Mathf.Floor(transform.position.y * 10) + 100);
+        GetComponent<SpriteRenderer>().sortingOrder = rand + (int) (-Mathf.Floor(transform.position.z * 10) + 100);
 
         if (gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Run")) //wait <= 0)
         {
@@ -165,9 +165,9 @@ public class Unit1_3d : MonoBehaviour
                 {
                     ///создаем патрон который летит туда где мы увидели врага
                     Instantiate(bulletPrefab, gameObject.transform.position,    // + moveVector,
-                                Quaternion.Euler(0, 0,
-                                    Mathf.Atan2(hit.gameObject.transform.position.y - transform.position.y,
-                                        hit.gameObject.transform.position.x - transform.position.x) * Mathf.Rad2Deg))
+                                Quaternion.Euler(45,
+                                    Mathf.Atan2(hit.gameObject.transform.position.z - transform.position.z,
+                                        hit.gameObject.transform.position.x - transform.position.x) * Mathf.Rad2Deg,0))
                             .GetComponent<Rigidbody>().velocity = new Vector3(
                                                                             hit.gameObject.transform
                                                                                 .position
