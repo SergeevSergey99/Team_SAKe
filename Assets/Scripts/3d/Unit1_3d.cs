@@ -21,7 +21,8 @@ public class Unit1_3d : MonoBehaviour
     private int rand;
     protected void Start()
     {
-        rand = rnd.Next(-2,3);
+//        rand = rnd.Next(-2,3);
+        GetComponent<SpriteRenderer>().sortingOrder = 100;
         gameObject.layer = isOurTeam ? 8 : 9;
         GetComponent<Animator>().SetInteger("HP", health);
 
@@ -117,7 +118,7 @@ public class Unit1_3d : MonoBehaviour
 	    return;
         }
 
-        GetComponent<SpriteRenderer>().sortingOrder = rand + (int) (-Mathf.Floor(transform.position.z * 10) + 100);
+    //    GetComponent<SpriteRenderer>().sortingOrder = rand + (int) (-Mathf.Floor(transform.position.z * 10) + 100);
 
         if (gameObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Run")) //wait <= 0)
         {

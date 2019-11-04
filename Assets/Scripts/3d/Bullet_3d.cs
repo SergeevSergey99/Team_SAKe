@@ -33,10 +33,15 @@ public class Bullet_3d : MonoBehaviour
 	{
 		GetComponent<SpriteRenderer>().sortingOrder = (int) (-Mathf.Floor(transform.position.z * 10) + 100)*(transform.position.y>=0?1:-1);
 
-		lifetime--;
-		if (lifetime <= 0)
+
+		if (transform.position.y < 0)
 		{
 			Destroy(gameObject);
+			return;
 		}
+		lifetime--;
+		if (lifetime <= 0)
+			Destroy(gameObject);
+		
 	}
 }
