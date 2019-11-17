@@ -15,7 +15,7 @@ public class counter : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        Destroy(other.gameObject);
+        Destroy(other.gameObject.transform.parent.transform.parent.gameObject);
         cnt++;
         text.GetComponent<Text>().text = cnt.ToString();
     }

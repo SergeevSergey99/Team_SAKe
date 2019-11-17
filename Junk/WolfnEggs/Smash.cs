@@ -13,13 +13,15 @@ public class Smash : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (transform.position.y < -1)
+        
+        if (transform.position.y < -2)
         {
             var go = Instantiate(ps);
             go.transform.position = transform.position;
             go.GetComponent<ParticleSystem>().Play();
             
-            Destroy(gameObject);
+            GameObject.Find("Spamer").GetComponent<instatiator>().isDie();
+            Destroy(transform.parent.transform.parent.gameObject);
         }
     }
 
