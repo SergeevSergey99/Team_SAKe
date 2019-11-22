@@ -9,13 +9,19 @@ public class Drager_3d : MonoBehaviour, IDragHandler, IEndDragHandler
     // Use this for initialization
     private void Start()
     {
+
+        
+        
         zeroPoint = gameObject.GetComponent<RectTransform>().anchoredPosition;
-        if (!unit.CompareTag("Actor"))
+        if (!unit.CompareTag("Actor") )
         {
-            cost = 10;
-            gameObject.transform.GetChild(0).GetComponent<Text>().text = cost.ToString();
+            cost = 0;
+            gameObject.transform.GetChild(0).GetComponent<Text>().text = "";
+            reloadTime = 5000;
             return;
         }
+
+        reloadTime = unit.GetComponent<Unit1_3d>().reloadTime;
         cost = unit.GetComponent<Unit1_3d>().cost;
         gameObject.transform.GetChild(0).GetComponent<Text>().text = cost.ToString();
     }
@@ -23,6 +29,8 @@ public class Drager_3d : MonoBehaviour, IDragHandler, IEndDragHandler
     public GameObject resourses;
     private Vector3 zeroPoint;
     private int cost = 0;
+    public int reloadTime = 0;
+    public int reloadTime_now = 0;
     public GameObject unit;
 
     public void OnDrag(PointerEventData eventData)
@@ -38,8 +46,9 @@ public class Drager_3d : MonoBehaviour, IDragHandler, IEndDragHandler
     public void OnEndDrag(PointerEventData eventData)
     {
         int res = Int32.Parse(resourses.GetComponent<Text>().text);
-        if (res >= cost && Time.timeScale > 0)
+        if (res >= cost && Time.timeScale > 0 && reloadTime_now >= reloadTime)
         {
+            reloadTime_now = 0;
             //создаём юнит в координатах где отпустили мышь
             if (!gameObject.name.Equals("AvaMe"))
             {
@@ -63,5 +72,15 @@ public class Drager_3d : MonoBehaviour, IDragHandler, IEndDragHandler
         }
 
         gameObject.GetComponent<RectTransform>().anchoredPosition = zeroPoint;
+    }
+
+    void FixedUpdate()
+    {
+
+        if (reloadTime >= reloadTime_now)
+        {
+            reloadTime_now++;
+            gameObject.GetComponent<Image>().fillAmount = reloadTime_now / (float)reloadTime;
+        }
     }
 }

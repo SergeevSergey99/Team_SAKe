@@ -10,6 +10,7 @@ public class Unit1_3d : MonoBehaviour
     public int damage = 5;
     public bool isOurTeam = true;
     public float speed = 10.0f;
+    public int reloadTime = 100;
     private Vector3 moveVector;
     private Rigidbody rb;
 
