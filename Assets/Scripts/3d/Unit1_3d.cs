@@ -7,6 +7,7 @@ public class Unit1_3d : MonoBehaviour
 {
     public int cost;
     [SerializeField] public int health = 1;
+    [SerializeField] private float Starthealth = 1;
     public int damage = 5;
     public bool isOurTeam = true;
     public float speed = 10.0f;
@@ -22,6 +23,7 @@ public class Unit1_3d : MonoBehaviour
     private int rand;
     protected void Start()
     {
+        Starthealth = health;
 //        rand = rnd.Next(-2,3);
         GetComponent<SpriteRenderer>().sortingOrder = 100;
         gameObject.layer = isOurTeam ? 8 : 9;
@@ -44,7 +46,7 @@ public class Unit1_3d : MonoBehaviour
         health -= dmg;
         GetComponent<Animator>().SetInteger("HP", health);
         if (HP != null)
-            HP.GetComponent<Image>().fillAmount = health / 100.0f;
+            HP.GetComponent<Image>().fillAmount = health / Starthealth;
     }
 
     public AudioClip shootSound;

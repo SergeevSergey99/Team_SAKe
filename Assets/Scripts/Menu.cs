@@ -22,6 +22,11 @@ public class Menu : MonoBehaviour
     {
         SceneManager.LoadScene("Game3d");
     }
+
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
     public void loadScene(String scene)
     {
         SceneManager.LoadScene(scene);

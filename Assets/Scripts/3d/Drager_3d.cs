@@ -52,7 +52,8 @@ public class Drager_3d : MonoBehaviour, IDragHandler, IEndDragHandler
             //создаём юнит в координатах где отпустили мышь
             if (!gameObject.name.Equals("AvaMe"))
             {
-                Instantiate(unit, new Vector3(9, 0.0f, Camera.main.ScreenToWorldPoint(Input.mousePosition).y),
+                Debug.Log(Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
+                Instantiate(unit, new Vector3(9, 0.0f, (Camera.main.ScreenToWorldPoint(Input.mousePosition).y-3)*2),
                     Quaternion.Euler(45, 0, 0));
             }
             else

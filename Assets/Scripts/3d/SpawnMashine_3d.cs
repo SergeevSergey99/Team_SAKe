@@ -68,6 +68,7 @@ public class SpawnMashine_3d : MonoBehaviour
             {
                 Collider[] clds = Physics.OverlapSphere(gameObject.transform.position + moveVector * 4.0f, 3.0f);
                 int count = 0;
+                float _z = 0;
                 foreach (var colider in clds)
                 {
                     if (colider.gameObject.CompareTag("Actor") &&
@@ -75,10 +76,11 @@ public class SpawnMashine_3d : MonoBehaviour
                         gameObject.GetComponent<Unit1_3d>().isOurTeam)
                     {
                         count++;
+                        _z = colider.gameObject.transform.position.z;
                     }
                 }
 
-                int spawnZ;
+                float spawnZ;
                 int unitType;
 
                 if (count <= 0)
@@ -92,7 +94,7 @@ public class SpawnMashine_3d : MonoBehaviour
                     reloadMax = 10;
                     resourse = maxValue;
                     unitType = rnd.Next(2, 4);
-                    spawnZ = 0;
+                    spawnZ = _z;
                 }
 
                 switch (unitType)
@@ -102,7 +104,7 @@ public class SpawnMashine_3d : MonoBehaviour
                         if (unitK_reload_now >= unitK_reload)
                         {
                             unitB_reload_now = 0;
-                            Instantiate(unitK, new Vector3(transform.position.x, 0, spawnZ),
+                            Instantiate(unitK, new Vector3(transform.position.x, 0, spawnZ + 0.01f+(Time.time%30/10000f)),
                                 Quaternion.Euler(45, 0, 0));
                             reload = reloadMax;
                             resourse -= unitK.GetComponent<Unit1_3d>().cost;
@@ -115,7 +117,7 @@ public class SpawnMashine_3d : MonoBehaviour
                         if (unitB_reload_now >= unitB_reload)
                         {
                             unitB_reload_now = 0;
-                            Instantiate(unitB, new Vector3(transform.position.x, 0, spawnZ),
+                            Instantiate(unitB, new Vector3(transform.position.x, 0, spawnZ + 0.01f +(Time.time%30/10000f)),
                                 Quaternion.Euler(45, 0, 0));
                             reload = reloadMax;
                             resourse -= unitB.GetComponent<Unit1_3d>().cost;
@@ -129,7 +131,7 @@ public class SpawnMashine_3d : MonoBehaviour
                         {
 
                             unitZ_reload_now = 0;
-                            Instantiate(unitZ, new Vector3(transform.position.x, 0, spawnZ),
+                            Instantiate(unitZ, new Vector3(transform.position.x, 0, spawnZ + 0.01f+(Time.time%30/10000f)),
                                 Quaternion.Euler(45, 0, 0));
                             reload = reloadMax;
                             resourse -= unitZ.GetComponent<Unit1_3d>().cost;
@@ -142,7 +144,7 @@ public class SpawnMashine_3d : MonoBehaviour
                         {
 
                             unitL_reload_now = 0;
-                            Instantiate(unitL, new Vector3(transform.position.x, 0, spawnZ),
+                            Instantiate(unitL, new Vector3(transform.position.x, 0, spawnZ + 0.01f+(Time.time%30/10000f)),
                                 Quaternion.Euler(45, 0, 0));
                             reload = reloadMax;
                             resourse -= unitL.GetComponent<Unit1_3d>().cost;
