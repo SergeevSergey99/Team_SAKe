@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 using Random = System.Random;
 
 public class SpawnMashine_3d : MonoBehaviour
@@ -7,33 +9,47 @@ public class SpawnMashine_3d : MonoBehaviour
 
 //	private float maxDistance = 8;
     private Vector3 moveVector;
-    public GameObject unitB;
+  /*  public GameObject unitB;
     public GameObject unitZ;
     public GameObject unitK;
     public GameObject unitL;
-
-    private int unitB_reload;
+*/
+    public List<GameObject> unitList;
+    int[] unitReloadlist = new int[100];
+    int[] unitReloadlist_now = new int[100];
+   /* private int unitB_reload;
     public int unitB_reload_now = 0;
     private int unitZ_reload;
     public int unitZ_reload_now = 0;
     private int unitK_reload;
     public int unitK_reload_now = 0;
+    
     private int unitL_reload;
+    
+    
     public int unitL_reload_now = 0;
-
+*/
     // Use this for initialization
     private Random rnd = new Random();
 
     void Start()
     {
-        moveVector = gameObject.GetComponent<Unit1_3d>().GetMVector();
+        moveVector = gameObject.GetComponent<Unit1_3d>().GetMVector();/*
         maxValue = Mathf.Max(Mathf.Max(unitB.GetComponent<Unit1_3d>().cost, unitL.GetComponent<Unit1_3d>().cost),
             Mathf.Max(unitZ.GetComponent<Unit1_3d>().cost, unitK.GetComponent<Unit1_3d>().cost));
-
-        unitB_reload = unitB.GetComponent<Unit1_3d>().reloadTime;
+*/
+        int i = 0;
+        foreach (var unit in unitList)
+        {
+            maxValue = Mathf.Max(maxValue, unit.GetComponent<Unit1_3d>().cost);
+            unitReloadlist[i] = unit.GetComponent<Unit1_3d>().reloadTime;
+            unitReloadlist_now[i] = 0;
+            i++;
+        }
+    /*    unitB_reload = unitB.GetComponent<Unit1_3d>().reloadTime;
         unitZ_reload = unitZ.GetComponent<Unit1_3d>().reloadTime;
         unitK_reload = unitK.GetComponent<Unit1_3d>().reloadTime;
-        unitL_reload = unitL.GetComponent<Unit1_3d>().reloadTime;
+        unitL_reload = unitL.GetComponent<Unit1_3d>().reloadTime;*/
     }
 
     public int reloadMax = 60;
@@ -46,6 +62,12 @@ public class SpawnMashine_3d : MonoBehaviour
     void FixedUpdate()
     {
 
+        for(int i = 0; i < unitList.Count-1; i++)
+        {
+            if (unitReloadlist_now[i] < unitReloadlist[i])
+                unitReloadlist_now[i]++;
+        }
+/*
         if (unitB_reload_now < unitB_reload)
             unitB_reload_now++;
         if (unitK_reload_now < unitK_reload)
@@ -54,7 +76,7 @@ public class SpawnMashine_3d : MonoBehaviour
             unitL_reload_now++;
         if (unitZ_reload_now < unitZ_reload)
             unitZ_reload_now++;
-        
+  */      
         resReload--;
         if (resReload <= 0)
         {
@@ -85,7 +107,7 @@ public class SpawnMashine_3d : MonoBehaviour
 
                 if (count <= 0)
                 {
-                    unitType = rnd.Next(1, 5);
+                    unitType = rnd.Next(0, unitList.Count);
                     spawnZ = rnd.Next(-4, 5);
                     reloadMax = 60;
                 }
@@ -93,11 +115,21 @@ public class SpawnMashine_3d : MonoBehaviour
                 {
                     reloadMax = 10;
                     resourse = maxValue;
-                    unitType = rnd.Next(2, 4);
+                    unitType = (int)rnd.Next(0, unitList.Count);
+                    Debug.Log(unitType);
                     spawnZ = _z;
                 }
 
-                switch (unitType)
+                if (unitReloadlist_now[unitType] >= unitReloadlist[unitType])
+                {
+                    unitReloadlist_now[unitType] = 0;
+                    Instantiate(unitList[unitType], new Vector3(transform.position.x, 0, spawnZ + 0.01f+(Time.time%30/10000f)),
+                        Quaternion.Euler(45, 0, 0));
+                    reload = reloadMax;
+                    resourse -= unitList[unitType].GetComponent<Unit1_3d>().cost;
+
+                }
+/*                switch (unitType)
                 {
                     case 1:
                     {
@@ -151,7 +183,7 @@ public class SpawnMashine_3d : MonoBehaviour
                         }
                     }
                         break;
-                }
+                }*/
             }
         }
         else
