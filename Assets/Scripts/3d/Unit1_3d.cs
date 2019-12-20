@@ -12,7 +12,7 @@ public class Unit1_3d : MonoBehaviour
     public bool isOurTeam = true;
     public float speed = 10.0f;
     public int reloadTime = 100;
-    private Vector3 moveVector;
+    public Vector3 moveVector;
     private Rigidbody rb;
 
     private AudioSource source;
@@ -33,6 +33,17 @@ public class Unit1_3d : MonoBehaviour
         moveVector = isOurTeam
             ? Vector3.left
             : Vector3.right;
+        bool flip = GetComponent<SpriteRenderer>().flipX;
+        GetComponent<SpriteRenderer>().flipX = !(flip ^ (moveVector == Vector3.right));
+            
+            
+            /*
+             * 0    0    1
+             * 1    0    0
+             * 0    1    0
+             * 1    1    1
+             * 
+             */
         moveVector = moveVector.normalized;
         rb = gameObject.GetComponents<Rigidbody>()[0];
 
@@ -53,7 +64,7 @@ public class Unit1_3d : MonoBehaviour
 
     public float maxDistance = 1.0f;
     public GameObject bulletPrefab;
-    [SerializeField] private bool isMeele = false;
+    [SerializeField] public bool isMeele = false;
 
     public Vector3 GetMVector()
     {
@@ -168,11 +179,11 @@ public class Unit1_3d : MonoBehaviour
                 if (hit != null)
                 {
                     ///создаем патрон который летит туда где мы увидели врага
-                    Instantiate(bulletPrefab, gameObject.transform.position,    // + moveVector,
+                    GameObject bullet = Instantiate(bulletPrefab, gameObject.transform.position,    // + moveVector,
                                 Quaternion.Euler(45 * moveVector.x,
                                     Mathf.Atan2(hit.gameObject.transform.position.z - transform.position.z,
-                                        hit.gameObject.transform.position.x - transform.position.x) * -Mathf.Rad2Deg,0))
-                            .GetComponent<Rigidbody>().velocity = new Vector3(
+                                        hit.gameObject.transform.position.x - transform.position.x) * -Mathf.Rad2Deg,0));
+                        bullet.GetComponent<Rigidbody>().velocity = new Vector3(
                                                                             hit.gameObject.transform
                                                                                 .position
                                                                                 .x - transform.position.x,
@@ -180,8 +191,8 @@ public class Unit1_3d : MonoBehaviour
                                                                             hit.gameObject.transform
                                                                                 .position
                                                                                 .z - transform.position.z)
-                                                                        .normalized * bulletPrefab
-                                                                        .GetComponent<Bullet_3d>().Speed;
+                                                                        .normalized * bulletPrefab.GetComponent<Bullet_3d>().Speed;
+                        bullet.GetComponent<Bullet_3d>().isOurTeam = isOurTeam;
                 }
             }
 

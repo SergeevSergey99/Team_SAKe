@@ -6,7 +6,7 @@ public class Bullet_3d : MonoBehaviour
 	public int Speed;
 	// Use this for initialization
 	private Rigidbody rb;
-	[SerializeField]private bool isOurTeam = false;
+	[SerializeField]public bool isOurTeam = false;
 	void Awake ()
 	{
 		Vector3 moveVector = isOurTeam ? Vector3.left : Vector3.right;

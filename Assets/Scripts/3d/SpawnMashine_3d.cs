@@ -62,7 +62,7 @@ public class SpawnMashine_3d : MonoBehaviour
     void FixedUpdate()
     {
 
-        for(int i = 0; i < unitList.Count-1; i++)
+        for(int i = 0; i < unitList.Count; i++)
         {
             if (unitReloadlist_now[i] < unitReloadlist[i])
                 unitReloadlist_now[i]++;
@@ -123,8 +123,10 @@ public class SpawnMashine_3d : MonoBehaviour
                 if (unitReloadlist_now[unitType] >= unitReloadlist[unitType])
                 {
                     unitReloadlist_now[unitType] = 0;
-                    Instantiate(unitList[unitType], new Vector3(transform.position.x, 0, spawnZ + 0.01f+(Time.time%30/10000f)),
+                    GameObject unit = Instantiate(unitList[unitType], new Vector3(transform.position.x, 0, spawnZ + 0.01f+(Time.time%30/10000f)),
                         Quaternion.Euler(45, 0, 0));
+                    unit.GetComponent<Unit1_3d>().moveVector = moveVector;
+                    unit.GetComponent<Unit1_3d>().isOurTeam = gameObject.GetComponent<Unit1_3d>().isOurTeam;
                     reload = reloadMax;
                     resourse -= unitList[unitType].GetComponent<Unit1_3d>().cost;
 
