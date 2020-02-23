@@ -9,6 +9,7 @@ public class GameManagerScript : MonoBehaviour
     public static GameManagerScript instance;
 
     //public static int points = 100;
+    public static bool isSet = false;
     public static GameObject General;
     public static List<GameObject> Army;
 
@@ -24,11 +25,7 @@ public class GameManagerScript : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    /*  void OnLevelWasLoaded(int level) {
-         
-          Debug.Log("scene was loaded");
-      }*/
+    
     public void SetGeneralAndArmy(GameObject G, List<GameObject> A)
     {
         General = G;
