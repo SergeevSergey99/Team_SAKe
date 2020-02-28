@@ -26,7 +26,7 @@ public class Drager_3d : MonoBehaviour, IDragHandler, IEndDragHandler
         gameObject.transform.GetChild(0).GetComponent<Text>().text = cost.ToString();
     }
 
-    public GameObject resourses;
+    public Transform resourses;
     private Vector3 zeroPoint;
     private int cost = 0;
     public int reloadTime = 0;
@@ -53,8 +53,11 @@ public class Drager_3d : MonoBehaviour, IDragHandler, IEndDragHandler
             if (!gameObject.name.Equals("AvaMe"))
             {
                 Debug.Log(Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
-                Instantiate(unit, new Vector3(9, 0.0f, (Camera.main.ScreenToWorldPoint(Input.mousePosition).y-3)*2),
-                    Quaternion.Euler(45, 0, 0));
+                GameObject Unit = Instantiate(unit, new Vector3(9, 0.0f, (Camera.main.ScreenToWorldPoint(Input.mousePosition).y-3)*2),
+                    Quaternion.Euler(0, 0, 0));
+                
+                Unit.GetComponent<Unit1_3d>().moveVector = Vector3.right;
+                Unit.GetComponent<Unit1_3d>().isOurTeam = true;
             }
             else
             {
@@ -62,7 +65,7 @@ public class Drager_3d : MonoBehaviour, IDragHandler, IEndDragHandler
                 {
                     
                     Instantiate(unit, new Vector3( rand.Next(-500, 500)/100.0f, Camera.main.ScreenToWorldPoint(Input.mousePosition).y + 35 + rand.Next(-500, 500)/100.0f, rand.Next(-500, 500)/100.0f),
-                            Quaternion.Euler(45, 0, -90)).GetComponent<Rigidbody>().velocity = Vector3.down * 15;
+                            Quaternion.Euler(0, 0, -90)).GetComponent<Rigidbody>().velocity = Vector3.down * 15;
                     
 
                 }

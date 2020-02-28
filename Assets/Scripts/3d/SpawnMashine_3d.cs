@@ -124,7 +124,7 @@ public class SpawnMashine_3d : MonoBehaviour
                 {
                     unitReloadlist_now[unitType] = 0;
                     GameObject unit = Instantiate(unitList[unitType], new Vector3(transform.position.x, 0, spawnZ + 0.01f+(Time.time%30/10000f)),
-                        Quaternion.Euler(45, 0, 0));
+                        Quaternion.Euler(0, 0, 0));
                     unit.GetComponent<Unit1_3d>().moveVector = moveVector;
                     unit.GetComponent<Unit1_3d>().isOurTeam = gameObject.GetComponent<Unit1_3d>().isOurTeam;
                     reload = reloadMax;
