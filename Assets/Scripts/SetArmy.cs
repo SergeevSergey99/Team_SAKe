@@ -7,7 +7,7 @@ public class SetArmy : MonoBehaviour
 {
     [SerializeField]private GameObject UI_Unit;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         
         GameObject.Find("Unit_Main").GetComponent<SpriteRenderer>().sprite = GameManagerScript.General.GetComponent<SpriteRenderer>().sprite;

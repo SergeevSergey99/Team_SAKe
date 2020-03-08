@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using Image = UnityEngine.UI.Image;
-
 using Random = System.Random;
+
 public class Unit1_3d : MonoBehaviour
 {
     public int cost;
@@ -16,7 +16,6 @@ public class Unit1_3d : MonoBehaviour
     private Rigidbody rb;
 
     private AudioSource source;
-
     public GameObject HP;
 
     private Random rnd = new Random();
